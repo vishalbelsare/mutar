@@ -110,3 +110,23 @@ def test_warmstart(gaussian_data):
     coef2 = est.coef_
 
     assert_allclose(coef1, coef2, 1e-4)
+
+
+def test_set_params_gl(gaussian_data):
+
+    X, y = gaussian_data
+    n_samples = y.shape[1]
+
+    Xty = np.array([xx.T.dot(yy) for xx, yy in zip(X, y)])
+    alpha_max = np.linalg.norm(Xty, axis=0).max()
+    alpha1 = 0.05 * alpha_max / n_samples
+    alpha2 = 0.6 * alpha_max / n_samples
+
+    coef0 = GroupLasso(alpha=alpha1).fit(X, y).coef_
+
+    est = GroupLasso(alpha=alpha2)
+    est.fit(X, y)
+    est.set_params(alpha=alpha1)
+    coef1 = est.fit(X, y).coef_
+
+    assert_allclose(coef0, coef1, 1e-4)

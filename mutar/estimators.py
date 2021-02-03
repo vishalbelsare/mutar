@@ -345,6 +345,11 @@ class GroupLasso(DirtyModel):
                          normalize=normalize, max_iter=max_iter, tol=tol,
                          positive=positive, warm_start=warm_start)
 
+    def _fit(self, X, y):
+        beta = 10 * self.alpha
+        self.beta = beta
+        super()._fit(X, y)
+
 
 class IndRewLasso(MultitaskRegression):
     """ Independent Reweighted Lasso estimator with L1 regularizer.
